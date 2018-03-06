@@ -15,7 +15,7 @@ dev:
 # Runs development server.
 # This step depends on `make dev`, however dependency is excluded to speed up dev server startup.
 run:
-	npm run dev & python ./manage.py runserver 0.0.0.0:$PORT
+	npm run dev & python ./manage.py runserver
 
 # Creates migrations and migrates database.
 # This step depends on `make dev`, however dependency is excluded to speed up dev server startup.
