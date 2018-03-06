@@ -5,7 +5,7 @@ var config = require('./webpack.config');
 // Dev server address specified in webpack.config.js
 var listen_addr = 'localhost';
 // Dev server port specified in webpack.config.js
-var listen_port = 8001;
+var listen_port = 5000
 
 new WebpackDevServer(webpack(config), {
     publicPath: config.output.publicPath,
