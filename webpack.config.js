@@ -10,7 +10,7 @@ var use_hot_reload = process.env.NODE_ENV !== 'production';
 // Dev server address specified in server.js
 var dev_server_addr = 'localhost';
 // Dev server port specified in server.js
-var dev_server_port = $PORT;
+var dev_server_port = process.env.PORT || 8000;
 
 module.exports = {
     entry: ['./frontend/main.js'],
