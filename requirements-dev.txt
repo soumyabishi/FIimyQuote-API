@@ -1,7 +1,6 @@
+django-webpack-loader
 django-debug-toolbar
 coverage
 coveralls
-django-nose
 djangorestframework
 mysqlclient
-django-cors-headers
