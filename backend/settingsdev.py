@@ -7,3 +7,14 @@ ALLOWED_HOSTS.append('localhost')
 INSTALLED_APPS.append('debug_toolbar')
 MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 ALLOWED_HOSTS = ['*']
+
+DATABASES = {
+    'default': {
+        'ENGINE': "django.db.backends.mysql",
+        'NAME': "movie_dialogues",
+        'USER': "root",
+        'PASSWORD': "",
+        "HOST": "localhost",
+        "PORT": "3306",
+    }
+}
