@@ -17,11 +17,15 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
-import backend.views
+from backend.views import *
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^$', backend.views.index)
+#    url(r'^admin/', admin.site.urls),
+    url(r'^$', index, name='home'),
+    url(r'^api/get-dialogues/$', DialogueViewSet.as_view({'get': 'get_dialogues'})),
+    url(r'^api/add-emotion/$', DialogueViewSet.as_view({'post': 'add_emoji'})),
+    url(r'^api/remove-emotion/$', DialogueViewSet.as_view({'post': 'remove_emoji'})),
+    url(r'^api/add-dialogue/$', DialogueViewSet.as_view({'post': 'add_dialogue'}))
 ]
 
 if settings.DEBUG:
