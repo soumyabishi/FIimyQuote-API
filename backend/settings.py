@@ -73,17 +73,27 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': "django.db.backends.mysql",
+#        'NAME': "n4jobpzani64d54p",
+#        'USER': "ky0vnv3k5dm3wmcf",
+#        'PASSWORD': "v7fbfmv5wao8mjpv",
+#        "HOST": "tkck4yllxdrw0bhi.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+#        "PORT": "3306",
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': "django.db.backends.mysql",
-        'NAME': "n4jobpzani64d54p",
-        'USER': "ky0vnv3k5dm3wmcf",
-        'PASSWORD': "v7fbfmv5wao8mjpv",
-        "HOST": "tkck4yllxdrw0bhi.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+        'NAME': "movie_quotes",
+        'USER': "root",
+        'PASSWORD': "",
+        "HOST": "localhost",
         "PORT": "3306",
     }
 }
-
 
 
 REST_FRAMEWORK = {

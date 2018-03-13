@@ -1,5 +1,4 @@
 django-webpack-loader
-django-debug-toolbar
 coverage
 coveralls
 djangorestframework

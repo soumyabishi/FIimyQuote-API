@@ -44,7 +44,8 @@ class DialogueViewSet(viewsets.ModelViewSet):
                     limit -= 1
                 dialogues_ser = app_serializers.DialogueSerializer(dialogues, many=True)
                 return JsonResponse({"dialogues": dialogues_ser.data}, status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

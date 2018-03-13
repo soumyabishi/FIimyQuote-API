@@ -25,8 +25,8 @@ class DialogueSerializer(serializers.ModelSerializer):
 
     def get_star_image_urls(self, obj):
         return {
-            'full': "https://image.tmdb.org/t/p/w500_and_h500_face{poster_link}".format(poster_link=obj.poster),
-            'thumb': "https://image.tmdb.org/t/p/w50_and_h50_face{poster_link}".format(poster_link=obj.poster)
+            'full': obj.poster,
+            'thumb': obj.poster
         }
 
     def get_tags(self, obj):
