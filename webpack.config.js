@@ -44,8 +44,8 @@ module.exports = {
             },
 
             {
-                 test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-                 loader: 'url-loader?limit=100000' },
+                 test: /\.(woff|woff2|eot|ttf)$/,
+                loader: 'url-loader?limit=100000' },
 
             {
                 test: /\.js$/,
@@ -53,12 +53,24 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.(png|jpg|gif|svg)$/,
+                test: /\.(png|jpg|gif)$/,
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]?[hash]'
                 }
             },
+            {
+                test: /\.(gif|png|jpe?g|svg)$/i,
+                use: [
+                    'file-loader',
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            bypassOnDebug: true,
+                        },
+                    },
+                ],
+            }
 
         ]
     },
