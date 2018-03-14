@@ -2,8 +2,8 @@
     <div class="quote-wrapper">
 
 
-        <a href="/" class="logo-container">
-            <img src="./assets/img/logo.svg" alt="FilmyQuote">
+        <a href="javascript:void(0)" class="logo-container" v-on:click="get_quote()" v-shortkey="['space']" @shortkey="get_quote()">
+            <img alt="FilmyQuote" src="./assets/img/logo.svg">
         </a>
 
         <p class="made-by ibm-type-mono">
@@ -109,7 +109,7 @@
                     </section>
 
 
-                    <a href="#" id="refresh" value="Refresh" v-on:click="get_quote()" v-shortkey="['space']" @shortkey="get_quote()" v-if="!loading_quote">
+                    <a href="javascript:void(0)" id="refresh" value="Refresh" v-on:click="get_quote()" v-shortkey="['space']" @shortkey="get_quote()" v-if="!loading_quote">
                         <svg class="icon"   version="1.1" id="Capa_1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
      width="35px" height="35px" viewBox="0 0 322.447 322.447" style="enable-background:new 0 0 322.447 322.447;"
      xml:space="preserve">
@@ -210,7 +210,6 @@
         computed: {},
 
         methods: {
-
             get_quote() {
                 this.loading_quote = true;
                 this.viewed_dialogues = this.$cookies.get("filmy_quotes_viewed_dialogues");
@@ -345,7 +344,8 @@
 <style lang="scss">
         @import './assets/css/semantic.min.css';
         @import './assets/css/animate.css';
-        @import './assets/css/main.css';
         @import '../node_modules/inter-ui/inter-ui.css';
         @import '../node_modules/@ibm/type/css/ibm-type.min.css';
+        @import './assets/css/main.css';
+
 </style>
