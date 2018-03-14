@@ -7,7 +7,7 @@
         </a>
 
         <p class="made-by ibm-type-mono">
-            Made with love by <a href="http://github.com/soumyabishi">Soumya</a> & <a href="#">Shiv</a>.
+            Made with love by <a href="http://github.com/soumyabishi" target="_blank">Soumya</a> & <a href="https://github.com/shiv-param" target="_blank">Shiv</a>.
         </p>
 
 
