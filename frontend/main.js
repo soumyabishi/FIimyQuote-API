@@ -11,12 +11,10 @@ import VueProgressiveImage from 'vue-progressive-image'
 
 Vue.use(VueProgressiveImage, {
     placeholder: 'https://unsplash.it/1920/1080?image=20'
-})
+});
 
-Vue.use(require('vue-shortkey'))
-
-
-
+Vue.use(require('vue-shortkey'));
+Vue.use(require('vue-cookies'));
 
 // eslint-disable-next-line no-new
 new Vue({
