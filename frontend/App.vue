@@ -41,8 +41,8 @@
                             <div class="poster">
 
                                 <progressive-img
-                                    :src="'https://image.tmdb.org/t/p/w500_and_h500_face/'+ filmyQuotes.dialogue.star_image_urls.full" :blur="30"
-                                    :placeholder="'https://image.tmdb.org/t/p/w500_and_h500_face/'+filmyQuotes.dialogue.star_image_urls.thumb"
+                                    :src="actor_image_url_full" :blur="30"
+                                    :placeholder="actor_image_url_thumb"
                                 />
 
                                 <!--<div class="progressive">-->
@@ -156,6 +156,7 @@
 <script>
     import {Picker} from 'emoji-mart-vue';
     import {Emoji} from 'emoji-mart-vue';
+    import placeHolderUrl from './assets/img/placeholder.svg'
 
     const pickEmoji = [
         {
@@ -197,7 +198,8 @@
                 actor_image_url: '',
                 first_quote: true,
                 loading_quote: false,
-                actor_image_preview_url: '',
+                actor_image_url_full: '',
+                actor_image_url_thumb: '',
                 reaction_not_added: true,
                 adding_reaction: false,
                 viewed_dialogues: "",
@@ -222,6 +224,20 @@
                 this.$http.get(url).then(response => {
                     this.loading_quote = false;
                     this.filmyQuotes = response.data;
+                    if(this.filmyQuotes.dialogue.star_image_urls.full){
+                        this.actor_image_url_full =  'https://image.tmdb.org/t/p/w500_and_h500_face/'+ this.filmyQuotes.dialogue.star_image_urls.full
+                    }
+                    else{
+                        this.actor_image_url_full = placeHolderUrl
+                    }
+
+                    if(this.filmyQuotes.dialogue.star_image_urls.thumb){
+                        this.actor_image_url_thumb =  'https://image.tmdb.org/t/p/w50_and_h50_face/'+ this.filmyQuotes.dialogue.star_image_urls.thumb
+                    }
+                    else{
+                        this.actor_image_url_thumb = placeHolderUrl
+                    }
+
                     setTimeout(function () {
                         $('.button')
                             .popup({
