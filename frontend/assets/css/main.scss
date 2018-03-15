@@ -52,7 +52,15 @@ section.quote{
     h1{
       font-weight: 300;
       font-size: 32px;
-
+        &.small{
+            font-size: 26px;
+        }
+        &.medium{
+            font-size: 32px;
+        }
+        &.large{
+            font-size: 36px;
+        }
     }
     p{
       font-size: 18px;
