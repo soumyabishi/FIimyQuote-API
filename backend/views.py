@@ -21,7 +21,6 @@ class DialogueViewSet(viewsets.ModelViewSet):
         # Get All Parameters
         try:
             limit = int(request.GET["limit"])
-            remove_dialogues = request.GET["remove-dialogues"].split(',')
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -30,7 +29,7 @@ class DialogueViewSet(viewsets.ModelViewSet):
             start_year = 1980
 
             # Get all dialogues and remove old dialogues
-            dialogue_objects = self.queryset.filter(movie_year__gte=start_year).exclude(id__in=remove_dialogues)
+            dialogue_objects = self.queryset.filter(movie_year__gte=start_year)
 
             # Check limit
             if limit == 1:
@@ -44,6 +43,7 @@ class DialogueViewSet(viewsets.ModelViewSet):
                     limit -= 1
                 dialogues_ser = app_serializers.DialogueSerializer(dialogues, many=True)
                 return JsonResponse({"dialogues": dialogues_ser.data}, status=status.HTTP_200_OK)
+
         except Exception as e:
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
