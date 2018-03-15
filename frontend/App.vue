@@ -18,7 +18,6 @@
 
                 <div class="ui container">
 
-
                     <section class="loader" v-if="loading_quote">
                         <div id="wrap">
                             <div id="loader">
@@ -202,7 +201,6 @@
                 actor_image_url_thumb: '',
                 reaction_not_added: true,
                 adding_reaction: false,
-                viewed_dialogues: "",
             }
         },
         mounted() {
@@ -214,13 +212,7 @@
         methods: {
             get_quote() {
                 this.loading_quote = true;
-                this.viewed_dialogues = this.$cookies.get("filmy_quotes_viewed_dialogues");
-                let url = '/api/get-dialogues/?limit=1&remove-dialogues=';
-                if(!this.viewed_dialogues){
-                    url += '0'
-                }else{
-                    url += this.viewed_dialogues;
-                }
+                let url = '/api/get-dialogues/?limit=1';
                 this.$http.get(url).then(response => {
                     this.loading_quote = false;
                     this.filmyQuotes = response.data;
@@ -230,14 +222,12 @@
                     else{
                         this.actor_image_url_full = placeHolderUrl
                     }
-
                     if(this.filmyQuotes.dialogue.star_image_urls.thumb){
                         this.actor_image_url_thumb =  'https://image.tmdb.org/t/p/w50_and_h50_face/'+ this.filmyQuotes.dialogue.star_image_urls.thumb
                     }
                     else{
                         this.actor_image_url_thumb = placeHolderUrl
                     }
-
                     setTimeout(function () {
                         $('.button')
                             .popup({
@@ -254,13 +244,6 @@
                             });
 
                     }, 10);
-                    let new_dialogue = this.filmyQuotes.dialogue.id;
-                    if(!this.viewed_dialogues){
-                        this.viewed_dialogues = new_dialogue;
-                    }else{
-                        this.viewed_dialogues += ',' + new_dialogue;
-                    }
-                    this.$cookies.set("filmy_quotes_viewed_dialogues", this.viewed_dialogues, (60*60*24*7));
                 }, response => {
                     this.loading_quote = false;
                 });
@@ -270,7 +253,6 @@
             onEnterClick: function() {
                 alert('Enter was pressed');
             },
-
 
 
             add_reaction(id, mood) {
