@@ -57,7 +57,7 @@
                             <div class="content">
 
                                 <img src="./assets/img/quote.svg" alt="Quote" class="quote_icon">
-                                <h1 class="ibm-type-serif">{{filmyQuotes.dialogue.dialogue}}</h1>
+                                <h1 class="ibm-type-serif" v-bind:class="{'small': font_isSmall, 'medium': font_isMedium, 'large': font_isLarge}">{{filmyQuotes.dialogue.dialogue}}</h1>
                                 <p class="text">-&nbsp;{{filmyQuotes.dialogue.star}}</p>
 
                                 <div class="emoji">
@@ -201,6 +201,9 @@
                 actor_image_url_thumb: '',
                 reaction_not_added: true,
                 adding_reaction: false,
+                font_isSmall: false,
+                font_isMedium: false,
+                font_isLarge: false
             }
         },
         mounted() {
@@ -228,6 +231,29 @@
                 console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
             },
 
+            set_fontsize(dialogue_text) {
+
+                var numWords = dialogue_text.split(" ").length;
+                console.log(numWords);
+
+                this.font_isSmall = false;
+                this.font_isMedium = false;
+                this.font_isLarge = false;
+
+                if(numWords >= 1 && numWords < 10){
+                    // $quote.css("font-size", "36px");
+                    this.font_isLarge = true;
+                }
+                else if(numWords >= 10 && numWords < 40){
+                    // $quote.css("font-size", "33px");
+                    this.font_isMedium = true;
+                }
+                else if(numWords >= 40){
+                    // $quote.css("font-size", "26px");
+                    this.font_isSmall = true;
+                }
+            },
+
             get_quote() {
                 this.loading_quote = true;
                 let url = '/api/get-dialogues/?limit=1';
@@ -252,6 +278,8 @@
                     }else{
                         this.reaction_not_added = true;
                     }
+
+                    this.set_fontsize(this.filmyQuotes.dialogue.dialogue);
 
                     setTimeout(function () {
                         $('.button')
@@ -315,32 +343,7 @@
                 }, response => {
                     this.adding_reaction = false;
                 });
-            },
-
-            set_fontsize() {
-                var $quote = $(".quote h1");
-                var $numWords = $quote.text().split().length;
-
-                if (($numWords >= 1) && ($numWords < 10)) {
-                    $quote.css("font-size", "36px");
-                }
-                else if (($numWords >= 10) && ($numWords < 20)) {
-                    $quote.css("font-size", "32px");
-                }
-                else if (($numWords >= 20) && ($numWords < 30)) {
-                    $quote.css("font-size", "32px");
-                }
-                else if (($numWords >= 30) && ($numWords < 40)) {
-                    $quote.css("font-size", "33px");
-                }
-                else if (($numWords >= 30) && ($numWords < 80)) {
-                    $quote.css("font-size", "26px");
-                }
-                else {
-                    $quote.css("font-size", "32px");
-                }
-            },
-
+            }
 
         },
 
@@ -358,6 +361,7 @@
 //        ;
             }, 15);
         },
+
         mounted() {
             this.get_quote();
         }
