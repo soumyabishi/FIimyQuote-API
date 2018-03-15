@@ -210,25 +210,49 @@
         computed: {},
 
         methods: {
+
+            check_reacted_dialogue(dialogue_id){
+                let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
+                console.log(all_reacted_dialogues);
+                if(all_reacted_dialogues.indexOf(dialogue_id) > -1)
+                    return true;
+                return false;
+            },
+
+            add_to_reacted_dialogues(dialogue_id){
+                let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
+                console.log(all_reacted_dialogues);
+                all_reacted_dialogues.push(dialogue_id);
+                console.log(all_reacted_dialogues);
+                this.$localStorage.set('filmy_quotes_user_added_dialogues', all_reacted_dialogues);
+                console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
+            },
+
             get_quote() {
                 this.loading_quote = true;
                 let url = '/api/get-dialogues/?limit=1';
                 this.$http.get(url).then(response => {
                     this.loading_quote = false;
-                    this.reaction_not_added = true;
+
                     this.filmyQuotes = response.data;
+
                     if(this.filmyQuotes.dialogue.star_image_urls.full){
                         this.actor_image_url_full =  'https://image.tmdb.org/t/p/w500_and_h500_face/'+ this.filmyQuotes.dialogue.star_image_urls.full
-                    }
-                    else{
+                    }else{
                         this.actor_image_url_full = placeHolderUrl
                     }
                     if(this.filmyQuotes.dialogue.star_image_urls.thumb){
                         this.actor_image_url_thumb =  'https://image.tmdb.org/t/p/w50_and_h50_face/'+ this.filmyQuotes.dialogue.star_image_urls.thumb
-                    }
-                    else{
+                    }else{
                         this.actor_image_url_thumb = placeHolderUrl
                     }
+
+                    if(this.check_reacted_dialogue(this.filmyQuotes.dialogue.id)){
+                        this.reaction_not_added = false;
+                    }else{
+                        this.reaction_not_added = true;
+                    }
+
                     setTimeout(function () {
                         $('.button')
                             .popup({
@@ -245,6 +269,7 @@
                             });
 
                     }, 10);
+
                 }, response => {
                     this.loading_quote = false;
                 });
@@ -283,6 +308,9 @@
                     }
                     this.filmyQuotes.dialogue.emotions = emotions;
                     this.reaction_not_added = false;
+
+                    this.add_to_reacted_dialogues(id);
+
                     this.adding_reaction = false;
                 }, response => {
                     this.adding_reaction = false;
