@@ -7,3 +7,4 @@ npm-debug.log
 db.sqlite3
 webpack-stats.json
 __pycache__
+*.pyc
