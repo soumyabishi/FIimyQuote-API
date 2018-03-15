@@ -215,6 +215,7 @@
                 let url = '/api/get-dialogues/?limit=1';
                 this.$http.get(url).then(response => {
                     this.loading_quote = false;
+                    this.reaction_not_added = true;
                     this.filmyQuotes = response.data;
                     if(this.filmyQuotes.dialogue.star_image_urls.full){
                         this.actor_image_url_full =  'https://image.tmdb.org/t/p/w500_and_h500_face/'+ this.filmyQuotes.dialogue.star_image_urls.full
