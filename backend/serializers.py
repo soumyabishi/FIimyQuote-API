@@ -21,13 +21,10 @@ class TagSerializer(serializers.ModelSerializer):
 class DialogueSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     emotions = serializers.SerializerMethodField()
-    star_image_urls = serializers.SerializerMethodField()
+    star_image_url = serializers.SerializerMethodField()
 
-    def get_star_image_urls(self, obj):
-        return {
-            'full': obj.poster,
-            'thumb': obj.poster
-        }
+    def get_star_image_url(self, obj):
+        return obj.poster
 
     def get_tags(self, obj):
         tag_mapping_objs = obj.tag_set.all()
@@ -54,4 +51,4 @@ class DialogueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = app_models.Dialogues
-        fields = ('id', 'dialogue', 'movie_name', 'star', 'movie_year', 'tags', 'emotions', 'star_image_urls')
+        fields = ('id', 'dialogue', 'movie_name', 'star', 'movie_year', 'tags', 'emotions', 'star_image_url')
