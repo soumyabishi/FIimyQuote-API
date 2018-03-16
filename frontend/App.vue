@@ -188,10 +188,7 @@
                         "movie_year": 20,
                         "tags": [],
                         "emotions": [],
-                        "star_image_urls": {
-                            "full": "",
-                            "thumb": ""
-                        }
+                        "star_image_url": ""
                     }
                 },
                 actor_image_url: '',
@@ -217,9 +214,7 @@
             check_reacted_dialogue(dialogue_id){
                 let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
                 console.log(all_reacted_dialogues);
-                if(all_reacted_dialogues.indexOf(dialogue_id) > -1)
-                    return true;
-                return false;
+                return all_reacted_dialogues.indexOf(dialogue_id) > -1;
             },
 
             add_to_reacted_dialogues(dialogue_id){
@@ -262,22 +257,15 @@
 
                     this.filmyQuotes = response.data;
 
-                    if(this.filmyQuotes.dialogue.star_image_urls.full){
-                        this.actor_image_url_full =  'https://image.tmdb.org/t/p/w500_and_h500_face/'+ this.filmyQuotes.dialogue.star_image_urls.full
+                    if(this.filmyQuotes.dialogue.star_image_url){
+                        this.actor_image_url_full =  'https://image.tmdb.org/t/p/w500_and_h500_face/'+ this.filmyQuotes.dialogue.star_image_url;
+                        this.actor_image_url_thumb =  'https://image.tmdb.org/t/p/w50_and_h50_face/'+ this.filmyQuotes.dialogue.star_image_url;
                     }else{
-                        this.actor_image_url_full = placeHolderUrl
-                    }
-                    if(this.filmyQuotes.dialogue.star_image_urls.thumb){
-                        this.actor_image_url_thumb =  'https://image.tmdb.org/t/p/w50_and_h50_face/'+ this.filmyQuotes.dialogue.star_image_urls.thumb
-                    }else{
+                        this.actor_image_url_full = placeHolderUrl;
                         this.actor_image_url_thumb = placeHolderUrl
                     }
 
-                    if(this.check_reacted_dialogue(this.filmyQuotes.dialogue.id)){
-                        this.reaction_not_added = false;
-                    }else{
-                        this.reaction_not_added = true;
-                    }
+                    this.reaction_not_added = !this.check_reacted_dialogue(this.filmyQuotes.dialogue.id);
 
                     this.set_fontsize(this.filmyQuotes.dialogue.dialogue);
 
