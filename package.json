@@ -17,6 +17,7 @@
     "semantic-ui-css": "^2.3.0",
     "vue": "^2.1.0",
     "vue-cookies": "^1.5.6",
+    "vue-localstorage": "^0.6.2",
     "vue-progressive-image": "^2.4.4",
     "vue-resource": "^1.5.0",
     "vue-shortkey": "^3.1.0"
