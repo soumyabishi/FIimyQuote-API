@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Max, Min
 import random
 from rest_framework import permissions, viewsets, mixins
 from rest_framework import status
@@ -110,6 +111,15 @@ class DialogueViewSet(viewsets.ModelViewSet):
                 emotion_object.save()
 
         return JsonResponse({"message": "Mood Removed"}, status=status.HTTP_200_OK)
+
+    def get_year_range(self, request, *args, **kwargs):
+        try:
+            min_year = self.queryset.aggregate(Min('movie_year'))['movie_year__min']
+            max_year = self.queryset.aggregate(Max('movie_year'))['movie_year__max']
+            return JsonResponse({"min_year": min_year, "max_year": max_year}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def add_dialogue(self, request, *args, **kwargs):
 
