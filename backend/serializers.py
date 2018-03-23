@@ -31,7 +31,7 @@ class DialogueSerializer(serializers.ModelSerializer):
         return list(map(lambda tag_mapping_obj: tag_mapping_obj.name, tag_mapping_objs))
 
     def get_emotions(self, obj):
-        emotion_objs = app_models.Emotion.objects.filter(dialogue=obj).order_by('count').desc()
+        emotion_objs = app_models.Emotion.objects.filter(dialogue=obj)
         return list(map(lambda emotion: {
             'mood': emotion.mood,
             'count': emotion.count
