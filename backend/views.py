@@ -36,6 +36,7 @@ class DialogueViewSet(viewsets.ModelViewSet):
         # Get All Parameters
         try:
             limit = int(request.GET["limit"])
+            include_tags = list(map(lambda tag: int(tag), request.GET["include_tags"].strip().split(',')))
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -45,6 +46,10 @@ class DialogueViewSet(viewsets.ModelViewSet):
 
             # Get all dialogues and remove old dialogues
             dialogue_objects = self.queryset.filter(movie_year__gte=start_year)
+
+            # Filter by tags
+            if include_tags[0] != 0:
+                dialogue_objects = dialogue_objects.filter(tag__in=include_tags)
 
             # Check limit
             if limit == 1:
