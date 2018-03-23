@@ -18,6 +18,19 @@ a.logo-container{
   top: 40px;
 }
 
+a.refine-dialogues-button{
+    position: absolute;
+    right: 40px;
+    top:40px;
+}
+
+div.filter-modal-content{
+    text-align: center;
+    button.tag_button{
+        margin: 5px;
+    }
+}
+
 section.quote{
   position: relative;
   max-width: 1000px;
