@@ -11,6 +11,20 @@ def index(request):
     return render(request, 'index.html')
 
 
+class TagViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    queryset = app_models.Tag.objects.all()
+
+    def get_all_tags(self, request, *args, **kwargs):
+        try:
+            tag_objects = self.queryset.exclude(name="miscellaneous").order_by("name")
+            tag_serializer = app_serializers.TagSerializer(tag_objects, many=True)
+            return JsonResponse({"tags": tag_serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class DialogueViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
