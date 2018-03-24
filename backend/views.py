@@ -35,7 +35,7 @@ class DialogueViewSet(viewsets.ModelViewSet):
 
         # Get All Parameters
         try:
-            limit = int(request.GET["limit"])
+            # limit = int(request.GET["limit"])
             include_tags = list(map(lambda tag: int(tag), request.GET["include_tags"].strip().split(',')))
             year_min = int(request.GET["year_min"])
             year_max = int(request.GET["year_max"])
@@ -51,18 +51,22 @@ class DialogueViewSet(viewsets.ModelViewSet):
             if include_tags[0] != 0:
                 dialogue_objects = dialogue_objects.filter(tag__in=include_tags)
 
-            # Check limit
-            if limit == 1:
-                dialogue = random.choice(dialogue_objects)
-                dialogue_ser = app_serializers.DialogueSerializer(dialogue)
-                return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
-            elif limit > 1:
-                dialogues = []
-                while limit != 0:
-                    dialogues.append(random.choice(dialogue_objects))
-                    limit -= 1
-                dialogues_ser = app_serializers.DialogueSerializer(dialogues, many=True)
-                return JsonResponse({"dialogues": dialogues_ser.data}, status=status.HTTP_200_OK)
+            dialogue = random.choice(dialogue_objects)
+            dialogue_ser = app_serializers.DialogueSerializer(dialogue)
+            return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
+
+            # # Check limit
+            # if limit == 1:
+            #     dialogue = random.choice(dialogue_objects)
+            #     dialogue_ser = app_serializers.DialogueSerializer(dialogue)
+            #     return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
+            # elif limit > 1:
+            #     dialogues = []
+            #     while limit != 0:
+            #         dialogues.append(random.choice(dialogue_objects))
+            #         limit -= 1
+            #     dialogues_ser = app_serializers.DialogueSerializer(dialogues, many=True)
+            #     return JsonResponse({"dialogues": dialogues_ser.data}, status=status.HTTP_200_OK)
 
         except Exception as e:
             print str(e)
