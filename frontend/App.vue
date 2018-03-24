@@ -94,7 +94,7 @@
                                             {{emotion.count}}
                                         </li>
                                     </ul>
-                                    <div class="button" :class="{'loading':adding_reaction}" v-if="reaction_not_added">Add reaction
+                                    <div class="button add_reaction_button" :class="{'loading':adding_reaction}" v-if="reaction_not_added">Add reaction
                                     </div>
                                     <div class="ui flowing popup top right transition hidden" v-if="reaction_not_added">
                                         <ul class="emojis-wrapper">
@@ -382,6 +382,25 @@
                 }
             },
 
+            enable_emoji_popup(){
+                setTimeout(function () {
+                    $('.add_reaction_button')
+                        .popup({
+                            inline: true,
+                            on: 'click',
+                            variation: 'basic',
+                            duration: 200,
+                            onShow: function () {
+                                $(".button").addClass("active");
+                            },
+                            onHide: function () {
+                                $(".button").removeClass("active");
+                            }
+                        });
+
+                }, 10);
+            },
+
             get_quote() {
                 this.loading_quote = true;
                 let url = '/api/get-dialogues/?limit=1&include_tags=';
@@ -408,23 +427,7 @@
                     this.reaction_not_added = !this.check_reacted_dialogue(this.filmyQuotes.dialogue.id);
 
                     this.set_fontsize(this.filmyQuotes.dialogue.dialogue);
-
-                    setTimeout(function () {
-                        $('.button')
-                            .popup({
-                                inline: true,
-                                on: 'click',
-                                variation: 'basic',
-                                duration: 200,
-                                onShow: function () {
-                                    $(".button").addClass("active");
-                                },
-                                onHide: function () {
-                                    $(".button").removeClass("active");
-                                }
-                            });
-
-                    }, 10);
+                    this.enable_emoji_popup();
 
                 }, response => {
                     this.loading_quote = false;
@@ -493,22 +496,7 @@
                         this.filmyQuotes.dialogue.emotions = emotions;
                         this.reaction_not_added = true;
                         this.remove_from_reacted_dialogues(id);
-                        setTimeout(function () {
-                            $('.button')
-                                .popup({
-                                    inline: true,
-                                    on: 'click',
-                                    variation: 'basic',
-                                    duration: 200,
-                                    onShow: function () {
-                                        $(".button").addClass("active");
-                                    },
-                                    onHide: function () {
-                                        $(".button").removeClass("active");
-                                    }
-                                });
-
-                        }, 10);
+                        this.enable_emoji_popup();
                     }, response => {
                     });
                 }
