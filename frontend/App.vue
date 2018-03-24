@@ -85,11 +85,11 @@
                                         <li v-for="emotion in filmyQuotes.dialogue.emotions">
                                             <span class="reaction-emo">
                                                 <emoji set="apple" emoji="heart_eyes" :size="25" native
-                                                       v-if="emotion.mood == 'heart_eyes'"></emoji>
-                                                <emoji set="apple" emoji="joy" :size="25" native v-if="emotion.mood == 'joy'"></emoji>
-                                                <emoji set="apple" emoji="flushed" :size="25" native v-if="emotion.mood == 'flushed'"></emoji>
-                                                <emoji set="apple" emoji="pensive" :size="25" native v-if="emotion.mood == 'pensive'"></emoji>
-                                                <emoji set="apple" emoji="rage" :size="25" native v-if="emotion.mood == 'rage'"></emoji>
+                                                       v-if="emotion.mood == 'heart_eyes'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'heart_eyes')"></emoji>
+                                                <emoji set="apple" emoji="joy" :size="25" native v-if="emotion.mood == 'joy'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'joy')"></emoji>
+                                                <emoji set="apple" emoji="flushed" :size="25" native v-if="emotion.mood == 'flushed'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'flushed')"></emoji>
+                                                <emoji set="apple" emoji="pensive" :size="25" native v-if="emotion.mood == 'pensive'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'pensive')"></emoji>
+                                                <emoji set="apple" emoji="rage" :size="25" native v-if="emotion.mood == 'rage'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'rage')"></emoji>
                                             </span>
                                             {{emotion.count}}
                                         </li>
@@ -270,15 +270,21 @@
                 $('.ui.basic.modal').modal('show');
             },
 
+            check_reacted_mood(dialogue_id, mood){
+                let all_reacted_moods = this.$localStorage.get('filmy_quotes_user_added_moods');
+                return all_reacted_moods.dialogue_id === mood;
+
+            },
+
             check_reacted_dialogue(dialogue_id){
                 let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
-                console.log(all_reacted_dialogues);
+                // console.log(all_reacted_dialogues);
                 return all_reacted_dialogues.indexOf(dialogue_id) > -1;
             },
 
             check_filtered_tags(){
                 let all_filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
-                console.log(all_filtered_tags);
+                // console.log(all_filtered_tags);
                 for(let i=0; i<this.all_tags.length; i++){
                     if (all_filtered_tags.indexOf(this.all_tags[i].id) > -1){
                         this.all_tags[i].selected = true;
@@ -296,35 +302,61 @@
 
             add_tag_to_filtered_tags(tag_id){
                 let all_filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
-                console.log(all_filtered_tags);
+                // console.log(all_filtered_tags);
                 all_filtered_tags.push(tag_id);
-                console.log(all_filtered_tags);
+                // console.log(all_filtered_tags);
                 this.$localStorage.set('filmy_quotes_user_added_tag_filters', all_filtered_tags);
-                console.log(this.$localStorage.get('filmy_quotes_user_added_tag_filters'));
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_tag_filters'));
                 this.check_filtered_tags();
             },
 
             remove_tag_from_filtered_tags(tag_id){
                 let all_filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
-                console.log(all_filtered_tags);
+                // console.log(all_filtered_tags);
                 let tag_index = all_filtered_tags.indexOf(tag_id);
-                console.log(tag_index);
+                // console.log(tag_index);
                 if (tag_index > -1){
                     all_filtered_tags.splice(tag_index, 1)
                 }
-                console.log(all_filtered_tags);
+                // console.log(all_filtered_tags);
                 this.$localStorage.set('filmy_quotes_user_added_tag_filters', all_filtered_tags);
-                console.log(this.$localStorage.get('filmy_quotes_user_added_tag_filters'));
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_tag_filters'));
                 this.check_filtered_tags();
             },
 
-            add_to_reacted_dialogues(dialogue_id){
+            add_to_reacted_dialogues(dialogue_id, emoji){
                 let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
-                console.log(all_reacted_dialogues);
+                let all_reacted_moods = this.$localStorage.get('filmy_quotes_user_added_moods');
+                // console.log(all_reacted_dialogues);
                 all_reacted_dialogues.push(dialogue_id);
-                console.log(all_reacted_dialogues);
+                all_reacted_moods.dialogue_id = emoji;
+                // console.log(all_reacted_dialogues);
                 this.$localStorage.set('filmy_quotes_user_added_dialogues', all_reacted_dialogues);
-                console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
+                this.$localStorage.set('filmy_quotes_user_added_moods', all_reacted_moods);
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
+            },
+
+            remove_from_reacted_dialogues(dialogue_id){
+                let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
+                let all_reacted_moods = this.$localStorage.get('filmy_quotes_user_added_moods');
+                // console.log(all_reacted_dialogues);
+                let emotion_found = false;
+                let emotion_at = -1;
+                for (let i = 0; i < all_reacted_dialogues.length; i++) {
+                    if (all_reacted_dialogues[i] === dialogue_id) {
+                        emotion_found = true;
+                        emotion_at = i;
+                        break
+                    }
+                }
+                if (emotion_found) {
+                    all_reacted_dialogues.splice(emotion_at, 1);
+                }
+                delete all_reacted_moods.dialogue_id;
+                // console.log(all_reacted_dialogues);
+                this.$localStorage.set('filmy_quotes_user_added_dialogues', all_reacted_dialogues);
+                this.$localStorage.set('filmy_quotes_user_added_moods', all_reacted_moods);
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
             },
 
             set_fontsize(dialogue_text) {
@@ -400,11 +432,6 @@
 
             },
 
-            onEnterClick: function() {
-                alert('Enter was pressed');
-            },
-
-
             add_reaction(id, mood) {
                 this.adding_reaction = true;
                 let data = {
@@ -432,15 +459,60 @@
                     }
                     this.filmyQuotes.dialogue.emotions = emotions;
                     this.reaction_not_added = false;
-
-                    this.add_to_reacted_dialogues(id);
-
+                    this.add_to_reacted_dialogues(id, mood);
                     this.adding_reaction = false;
                 }, response => {
                     this.adding_reaction = false;
                 });
-            }
+            },
 
+            remove_reaction(id, mood) {
+                if(this.check_reacted_mood(id, mood)){
+                    let data = {
+                        'dialogue': id,
+                        'mood': mood
+                    };
+                    this.$http.post('/api/remove-emotion/', data).then(response => {
+                        let emotions = this.filmyQuotes.dialogue.emotions;
+                        let emotion_found = false;
+                        let emotion_at = -1;
+                        for (let i = 0; i < emotions.length; i++) {
+                            if (emotions[i].mood === mood) {
+                                emotion_found = true;
+                                emotion_at = i;
+                                break
+                            }
+                        }
+                        if (emotion_found) {
+                            if(emotions[emotion_at].count === 1){
+                                emotions.splice(emotion_at, 1)
+                            }else{
+                                emotions[emotion_at].count = emotions[emotion_at].count - 1;
+                            }
+                        }
+                        this.filmyQuotes.dialogue.emotions = emotions;
+                        this.reaction_not_added = true;
+                        this.remove_from_reacted_dialogues(id);
+                        setTimeout(function () {
+                            $('.button')
+                                .popup({
+                                    inline: true,
+                                    on: 'click',
+                                    variation: 'basic',
+                                    duration: 200,
+                                    onShow: function () {
+                                        $(".button").addClass("active");
+                                    },
+                                    onHide: function () {
+                                        $(".button").removeClass("active");
+                                    }
+                                });
+
+                        }, 10);
+                    }, response => {
+                    });
+                }
+            }
         },
 
 

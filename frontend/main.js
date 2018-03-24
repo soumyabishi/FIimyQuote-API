@@ -27,6 +27,10 @@ new Vue({
             type: Object,
             default: []
         },
+        filmy_quotes_user_added_moods: {
+            type: Object,
+            default: {}
+        },
         filmy_quotes_user_added_tag_filters: {
             type: Object,
             default: []
