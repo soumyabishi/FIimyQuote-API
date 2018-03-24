@@ -403,7 +403,7 @@
 
             get_quote() {
                 this.loading_quote = true;
-                let url = '/api/get-dialogues/?limit=1&include_tags=';
+                let url = '/api/get-dialogues/?include_tags=';
                 let filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
                 if(filtered_tags.length){
                     url += filtered_tags.join();
