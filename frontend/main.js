@@ -27,5 +27,17 @@ new Vue({
             type: Object,
             default: []
         },
+        filmy_quotes_user_added_tag_filters: {
+            type: Object,
+            default: []
+        },
+        filmy_quotes_user_added_min_year: {
+            type: Number,
+            default: 0
+        },
+        filmy_quotes_user_added_max_year: {
+            type: Number,
+            default: 0
+        }
     }
 });

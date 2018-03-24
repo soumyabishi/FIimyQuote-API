@@ -29,7 +29,7 @@
                 <div class="ui hidden divider"></div>
                 <div class="ui hidden divider"></div>
                 <div class="ui hidden divider"></div>
-                <vue_slider v-model="sliderValue.value"></vue_slider>
+                <vue_slider ref="slider" v-model="sliderValue.value" :min="sliderValue.min" :max="sliderValue.max" :interval="1"></vue_slider>
             </div>
         </div>
 
@@ -83,14 +83,14 @@
                                 <div class="emoji">
                                     <ul class="reactions">
                                         <li v-for="emotion in filmyQuotes.dialogue.emotions">
-                      <span class="reaction-emo">
-                        <emoji set="apple" emoji="heart_eyes" :size="25" native
-                               v-if="emotion.mood == 'heart_eyes'"></emoji>
-                        <emoji set="apple" emoji="joy" :size="25" native v-if="emotion.mood == 'joy'"></emoji>
-                        <emoji set="apple" emoji="flushed" :size="25" native v-if="emotion.mood == 'flushed'"></emoji>
-                        <emoji set="apple" emoji="pensive" :size="25" native v-if="emotion.mood == 'pensive'"></emoji>
-                        <emoji set="apple" emoji="rage" :size="25" native v-if="emotion.mood == 'rage'"></emoji>
-                      </span>
+                                            <span class="reaction-emo">
+                                                <emoji set="apple" emoji="heart_eyes" :size="25" native
+                                                       v-if="emotion.mood == 'heart_eyes'"></emoji>
+                                                <emoji set="apple" emoji="joy" :size="25" native v-if="emotion.mood == 'joy'"></emoji>
+                                                <emoji set="apple" emoji="flushed" :size="25" native v-if="emotion.mood == 'flushed'"></emoji>
+                                                <emoji set="apple" emoji="pensive" :size="25" native v-if="emotion.mood == 'pensive'"></emoji>
+                                                <emoji set="apple" emoji="rage" :size="25" native v-if="emotion.mood == 'rage'"></emoji>
+                                            </span>
                                             {{emotion.count}}
                                         </li>
                                     </ul>
@@ -161,9 +161,9 @@
                     class="year">({{filmyQuotes.dialogue.movie_year}})</span>
                 </li>
                 <li class="tags">
-             <span v-for="(tag,index) in filmyQuotes.dialogue.tags">
-               {{ tag }}<span v-if="index<filmyQuotes.dialogue.tags.length-1">, </span>
-             </span>
+                    <span v-for="(tag,index) in filmyQuotes.dialogue.tags">
+                        {{ tag }}<span v-if="index<filmyQuotes.dialogue.tags.length-1">, </span>
+                     </span>
                 </li>
             </ul>
 
@@ -225,28 +225,9 @@
                 font_isLarge: false,
                 all_tags: [],
                 sliderValue: {
-                    value: [13, 12],
-                    width: "100%",
-                    height: 8,
-                    dotSize: 16,
-                    min: 1950,
-                    max: 2018,
-                    disabled: false,
-                    show: true,
-                    useKeyboard: true,
-                    tooltip: "always",
-                    formatter: "{value}",
-                    bgStyle: {
-                        "backgroundColor": "#fff",
-                        "boxShadow": "inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)"
-                    },
-                    tooltipStyle: {
-                        "backgroundColor": "#666",
-                        "borderColor": "#666"
-                    },
-                    processStyle: {
-                        "backgroundColor": "#999"
-                    }
+                    value: [0,0],
+                    max: 0,
+                    min: 0
                 }
             }
         },
@@ -260,6 +241,18 @@
                 this.$http.get(url).then(response => {
                     this.sliderValue.min = response.data.min_year;
                     this.sliderValue.max = response.data.max_year;
+                    let min_year_filter = this.$localStorage.get('filmy_quotes_user_added_min_year');
+                    let max_year_filter = this.$localStorage.get('filmy_quotes_user_added_max_year');
+                    if(min_year_filter === 0){
+                        min_year_filter = response.data.min_year;
+                        this.$localStorage.set('filmy_quotes_user_added_min_year', min_year_filter);
+                    }
+                    if(max_year_filter === 0){
+                        max_year_filter = response.data.max_year;
+                        this.$localStorage.set('filmy_quotes_user_added_max_year', max_year_filter);
+                    }
+                    this.sliderValue.value = [min_year_filter, max_year_filter];
+                    this.get_quote();
                 }, response => {
                 });
             },
@@ -366,6 +359,7 @@
                 }else{
                     url += '0';
                 }
+                url += '&year_min=' + this.sliderValue.value[0] + '&year_max=' + this.sliderValue.value[1];
                 this.$http.get(url).then(response => {
                     this.loading_quote = false;
 
@@ -465,7 +459,6 @@
         },
 
         mounted() {
-            this.get_quote();
             this.fetch_tags();
             this.fetch_year_range();
         }
