@@ -1,5 +1,5 @@
 <template>
-    <div class="quote-wrapper">
+    <div class="quote-wrapper" id="quote_wrapper">
 
 
         <a href="javascript:void(0)" class="logo-container" v-on:click="get_quote()" v-shortkey="['space']" @shortkey="get_quote()">
@@ -17,7 +17,11 @@
             <i class="filter icon"></i>
         </a>
 
-        <div class="ui basic modal">
+        <a class="ui compact icon button share-dialogue-button" @click="init_share()">
+            <i class="download icon"></i>
+        </a>
+
+        <div class="ui basic modal filter_modal">
             <div class="ui icon header">
                 <i class="filter icon"></i>
                 Set your Preferences
@@ -177,6 +181,7 @@
     import {Emoji} from 'emoji-mart-vue';
     import placeHolderUrl from './assets/img/placeholder.svg';
     import vueSlider from 'vue-slider-component';
+    import domtoimage from 'dom-to-image';
 
     const pickEmoji = [
         {
@@ -267,7 +272,7 @@
             },
 
             open_filter_modal(){
-                $('.ui.basic.modal').modal('show');
+                $('.filter_modal').modal('show');
             },
 
             check_reacted_mood(dialogue_id, mood){
@@ -500,6 +505,18 @@
                     }, response => {
                     });
                 }
+            },
+
+            init_share(){
+                let vm = this;
+                let node = document.getElementById('quote_wrapper');
+                domtoimage.toJpeg(node, { quality: 0.95 })
+                    .then(function (dataUrl) {
+                        var link = document.createElement('a');
+                        link.download = 'filmy-quote-' + vm.filmyQuotes.dialogue.id + '.jpeg';
+                        link.href = dataUrl;
+                        link.click();
+                    });
             }
         },
 

@@ -18,6 +18,11 @@ a.refine-dialogues-button {
   right: 40px;
   top: 40px; }
 
+a.share-dialogue-button {
+  position: absolute;
+  right: 100px;
+  top: 40px; }
+
 div.filter-modal-content {
   text-align: center; }
   div.filter-modal-content button.tag_button {
