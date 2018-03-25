@@ -14,7 +14,7 @@
         <p class="overlay-text">FilmyQuote</p>
 
         <a class="ui compact icon button refine-dialogues-button" @click="open_filter_modal()">
-            <i class="filter icon"></i>
+            <i class="cogs icon"></i>
         </a>
 
         <a class="ui compact icon button share-dialogue-button" @click="init_share()">
@@ -22,10 +22,10 @@
         </a>
 
         <div class="ui basic modal filter_modal">
-            <div class="ui icon header">
-                <i class="filter icon"></i>
-                Set your Preferences
-            </div>
+            <h1 class="ui header">
+                Dialogue Preferences
+                <div class="sub header">Set your preferences to discover dialogues you love</div>
+            </h1>
             <div class="content filter-modal-content">
                 <button class="ui tiny button tag_button" v-for="tag in all_tags" v-bind:class="{ 'teal': tag.selected}" @click="update_tag(tag.id, tag.selected)">
                     {{ tag.name }}
@@ -205,7 +205,6 @@
 
         data() {
             return {
-
                 filmyQuotes: {
                     "dialogue": {
                         "id": 0,
