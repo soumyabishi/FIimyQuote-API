@@ -84,19 +84,6 @@ DATABASES = {
     }
 }
 
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': "django.db.backends.mysql",
-#        'NAME': "movie_quotes",
-#        'USER': "root",
-#        'PASSWORD': "",
-#        "HOST": "localhost",
-#        "PORT": "3306",
-#    }
-#}
-
-
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
