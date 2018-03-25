@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Max, Min
 import random
 from rest_framework import permissions, viewsets, mixins
 from rest_framework import status
@@ -11,38 +12,61 @@ def index(request):
     return render(request, 'index.html')
 
 
+class TagViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    queryset = app_models.Tag.objects.all()
+
+    def get_all_tags(self, request, *args, **kwargs):
+
+        try:
+            tag_objects = self.queryset.exclude(name="miscellaneous").order_by("name")
+            tag_serializer = app_serializers.TagSerializer(tag_objects, many=True)
+            return JsonResponse({"tags": tag_serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class DialogueViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
-
     queryset = app_models.Dialogues.objects.all()
 
     def get_dialogues(self, request, *args, **kwargs):
 
         # Get All Parameters
         try:
-            limit = int(request.GET["limit"])
+            # limit = int(request.GET["limit"])
+            include_tags = list(map(lambda tag: int(tag), request.GET["include_tags"].strip().split(',')))
+            year_min = int(request.GET["year_min"])
+            year_max = int(request.GET["year_max"])
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Set Start year
-            start_year = 1980
 
             # Get all dialogues and remove old dialogues
-            dialogue_objects = self.queryset.filter(movie_year__gte=start_year)
+            dialogue_objects = self.queryset.filter(movie_year__gte=year_min, movie_year__lte=year_max)
 
-            # Check limit
-            if limit == 1:
-                dialogue = random.choice(dialogue_objects)
-                dialogue_ser = app_serializers.DialogueSerializer(dialogue)
-                return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
-            elif limit > 1:
-                dialogues = []
-                while limit != 0:
-                    dialogues.append(random.choice(dialogue_objects))
-                    limit -= 1
-                dialogues_ser = app_serializers.DialogueSerializer(dialogues, many=True)
-                return JsonResponse({"dialogues": dialogues_ser.data}, status=status.HTTP_200_OK)
+            # Filter by tags
+            if include_tags[0] != 0:
+                dialogue_objects = dialogue_objects.filter(tag__in=include_tags)
+
+            dialogue = random.choice(dialogue_objects)
+            dialogue_ser = app_serializers.DialogueSerializer(dialogue)
+            return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
+
+            # # Check limit
+            # if limit == 1:
+            #     dialogue = random.choice(dialogue_objects)
+            #     dialogue_ser = app_serializers.DialogueSerializer(dialogue)
+            #     return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
+            # elif limit > 1:
+            #     dialogues = []
+            #     while limit != 0:
+            #         dialogues.append(random.choice(dialogue_objects))
+            #         limit -= 1
+            #     dialogues_ser = app_serializers.DialogueSerializer(dialogues, many=True)
+            #     return JsonResponse({"dialogues": dialogues_ser.data}, status=status.HTTP_200_OK)
 
         except Exception as e:
             print str(e)
@@ -96,6 +120,15 @@ class DialogueViewSet(viewsets.ModelViewSet):
                 emotion_object.save()
 
         return JsonResponse({"message": "Mood Removed"}, status=status.HTTP_200_OK)
+
+    def get_year_range(self, request, *args, **kwargs):
+        try:
+            min_year = self.queryset.aggregate(Min('movie_year'))['movie_year__min']
+            max_year = self.queryset.aggregate(Max('movie_year'))['movie_year__max']
+            return JsonResponse({"min_year": min_year, "max_year": max_year}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def add_dialogue(self, request, *args, **kwargs):
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="quote-wrapper">
+    <div class="quote-wrapper" id="quote_wrapper">
 
 
         <a href="javascript:void(0)" class="logo-container" v-on:click="get_quote()" v-shortkey="['space']" @shortkey="get_quote()">
@@ -12,6 +12,30 @@
 
 
         <p class="overlay-text">FilmyQuote</p>
+
+        <a class="ui compact icon button refine-dialogues-button" @click="open_filter_modal()">
+            <i class="cogs icon"></i>
+        </a>
+
+        <a class="ui compact icon button share-dialogue-button" @click="init_share()">
+            <i class="download icon"></i>
+        </a>
+
+        <div class="ui basic modal filter_modal">
+            <h1 class="ui header">
+                Dialogue Preferences
+                <div class="sub header">Set your preferences to discover dialogues you love</div>
+            </h1>
+            <div class="content filter-modal-content">
+                <button class="ui tiny button tag_button" v-for="tag in all_tags" v-bind:class="{ 'teal': tag.selected}" @click="update_tag(tag.id, tag.selected)">
+                    {{ tag.name }}
+                </button>
+                <div class="ui hidden divider"></div>
+                <div class="ui hidden divider"></div>
+                <div class="ui hidden divider"></div>
+                <vue_slider ref="slider" v-model="sliderValue.value" :min="sliderValue.min" :max="sliderValue.max" :interval="1"></vue_slider>
+            </div>
+        </div>
 
         <div class="something-semantic">
             <div class="something-else-semantic">
@@ -63,18 +87,18 @@
                                 <div class="emoji">
                                     <ul class="reactions">
                                         <li v-for="emotion in filmyQuotes.dialogue.emotions">
-                      <span class="reaction-emo">
-                        <emoji set="apple" emoji="heart_eyes" :size="25" native
-                               v-if="emotion.mood == 'heart_eyes'"></emoji>
-                        <emoji set="apple" emoji="joy" :size="25" native v-if="emotion.mood == 'joy'"></emoji>
-                        <emoji set="apple" emoji="flushed" :size="25" native v-if="emotion.mood == 'flushed'"></emoji>
-                        <emoji set="apple" emoji="pensive" :size="25" native v-if="emotion.mood == 'pensive'"></emoji>
-                        <emoji set="apple" emoji="rage" :size="25" native v-if="emotion.mood == 'rage'"></emoji>
-                      </span>
+                                            <span class="reaction-emo">
+                                                <emoji set="apple" emoji="heart_eyes" :size="25" native
+                                                       v-if="emotion.mood == 'heart_eyes'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'heart_eyes')"></emoji>
+                                                <emoji set="apple" emoji="joy" :size="25" native v-if="emotion.mood == 'joy'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'joy')"></emoji>
+                                                <emoji set="apple" emoji="flushed" :size="25" native v-if="emotion.mood == 'flushed'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'flushed')"></emoji>
+                                                <emoji set="apple" emoji="pensive" :size="25" native v-if="emotion.mood == 'pensive'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'pensive')"></emoji>
+                                                <emoji set="apple" emoji="rage" :size="25" native v-if="emotion.mood == 'rage'" v-on:click="remove_reaction(filmyQuotes.dialogue.id, 'rage')"></emoji>
+                                            </span>
                                             {{emotion.count}}
                                         </li>
                                     </ul>
-                                    <div class="button" :class="{'loading':adding_reaction}" v-if="reaction_not_added">Add reaction
+                                    <div class="button add_reaction_button" :class="{'loading':adding_reaction}" v-if="reaction_not_added">Add reaction
                                     </div>
                                     <div class="ui flowing popup top right transition hidden" v-if="reaction_not_added">
                                         <ul class="emojis-wrapper">
@@ -141,9 +165,9 @@
                     class="year">({{filmyQuotes.dialogue.movie_year}})</span>
                 </li>
                 <li class="tags">
-             <span v-for="(tag,index) in filmyQuotes.dialogue.tags">
-               {{ tag }}<span v-if="index<filmyQuotes.dialogue.tags.length-1">, </span>
-             </span>
+                    <span v-for="(tag,index) in filmyQuotes.dialogue.tags">
+                        {{ tag }}<span v-if="index<filmyQuotes.dialogue.tags.length-1">, </span>
+                     </span>
                 </li>
             </ul>
 
@@ -155,7 +179,9 @@
 <script>
     import {Picker} from 'emoji-mart-vue';
     import {Emoji} from 'emoji-mart-vue';
-    import placeHolderUrl from './assets/img/placeholder.svg'
+    import placeHolderUrl from './assets/img/placeholder.svg';
+    import vueSlider from 'vue-slider-component';
+    import domtoimage from 'dom-to-image';
 
     const pickEmoji = [
         {
@@ -173,19 +199,19 @@
 
         components: {
             picker: Picker,
-            emoji: Emoji
+            emoji: Emoji,
+            vue_slider: vueSlider
         },
 
         data() {
             return {
-
                 filmyQuotes: {
                     "dialogue": {
                         "id": 0,
                         "dialogue": "",
                         "movie_name": "",
                         "star": "",
-                        "movie_year": 20,
+                        "movie_year": 0,
                         "tags": [],
                         "emotions": [],
                         "star_image_url": ""
@@ -200,30 +226,146 @@
                 adding_reaction: false,
                 font_isSmall: false,
                 font_isMedium: false,
-                font_isLarge: false
+                font_isLarge: false,
+                all_tags: [],
+                sliderValue: {
+                    value: [0,0],
+                    max: 0,
+                    min: 0
+                },
+                first_time_user: false
             }
-        },
-        mounted() {
-
         },
 
         computed: {},
 
         methods: {
 
+            check_first_time_user(){
+                this.first_time_user = this.$localStorage.get('filmy_quotes_user_first_time');
+                this.$localStorage.set('filmy_quotes_user_first_time', true);
+            },
+
+            fetch_year_range(){
+                let url = '/api/get-year-range/';
+                this.$http.get(url).then(response => {
+                    this.sliderValue.min = response.data.min_year;
+                    this.sliderValue.max = response.data.max_year;
+                    let min_year_filter = this.$localStorage.get('filmy_quotes_user_added_min_year');
+                    let max_year_filter = this.$localStorage.get('filmy_quotes_user_added_max_year');
+                    if(min_year_filter === 0){
+                        min_year_filter = response.data.min_year;
+                        this.$localStorage.set('filmy_quotes_user_added_min_year', min_year_filter);
+                    }
+                    if(max_year_filter === 0){
+                        max_year_filter = response.data.max_year;
+                    }
+                    this.sliderValue.value = [min_year_filter, max_year_filter];
+                    this.get_quote();
+                }, response => {
+                });
+            },
+
+            fetch_tags(){
+                let url = '/api/get-tags/';
+                this.$http.get(url).then(response => {
+                    this.all_tags = response.data.tags;
+                    this.check_filtered_tags();
+                }, response => {
+                });
+            },
+
+            open_filter_modal(){
+                $('.filter_modal').modal('show');
+            },
+
+            check_reacted_mood(dialogue_id, mood){
+                let all_reacted_moods = this.$localStorage.get('filmy_quotes_user_added_moods');
+                return all_reacted_moods.dialogue_id === mood;
+
+            },
+
             check_reacted_dialogue(dialogue_id){
                 let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
-                console.log(all_reacted_dialogues);
+                // console.log(all_reacted_dialogues);
                 return all_reacted_dialogues.indexOf(dialogue_id) > -1;
             },
 
-            add_to_reacted_dialogues(dialogue_id){
+            check_filtered_tags(){
+                let all_filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
+                // console.log(all_filtered_tags);
+                for(let i=0; i<this.all_tags.length; i++){
+                    if (all_filtered_tags.indexOf(this.all_tags[i].id) > -1){
+                        this.all_tags[i].selected = true;
+                    }else{
+                        this.all_tags[i].selected = false;
+                    }
+                }
+                this.$forceUpdate();
+            },
+
+            update_tag(tag_id, selected){
+                if(selected) this.remove_tag_from_filtered_tags(tag_id);
+                else this.add_tag_to_filtered_tags(tag_id);
+            },
+
+            add_tag_to_filtered_tags(tag_id){
+                let all_filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
+                // console.log(all_filtered_tags);
+                all_filtered_tags.push(tag_id);
+                // console.log(all_filtered_tags);
+                this.$localStorage.set('filmy_quotes_user_added_tag_filters', all_filtered_tags);
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_tag_filters'));
+                this.check_filtered_tags();
+            },
+
+            remove_tag_from_filtered_tags(tag_id){
+                let all_filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
+                // console.log(all_filtered_tags);
+                let tag_index = all_filtered_tags.indexOf(tag_id);
+                // console.log(tag_index);
+                if (tag_index > -1){
+                    all_filtered_tags.splice(tag_index, 1)
+                }
+                // console.log(all_filtered_tags);
+                this.$localStorage.set('filmy_quotes_user_added_tag_filters', all_filtered_tags);
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_tag_filters'));
+                this.check_filtered_tags();
+            },
+
+            add_to_reacted_dialogues(dialogue_id, emoji){
                 let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
-                console.log(all_reacted_dialogues);
+                let all_reacted_moods = this.$localStorage.get('filmy_quotes_user_added_moods');
+                // console.log(all_reacted_dialogues);
                 all_reacted_dialogues.push(dialogue_id);
-                console.log(all_reacted_dialogues);
+                all_reacted_moods.dialogue_id = emoji;
+                // console.log(all_reacted_dialogues);
                 this.$localStorage.set('filmy_quotes_user_added_dialogues', all_reacted_dialogues);
-                console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
+                this.$localStorage.set('filmy_quotes_user_added_moods', all_reacted_moods);
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
+            },
+
+            remove_from_reacted_dialogues(dialogue_id){
+                let all_reacted_dialogues = this.$localStorage.get('filmy_quotes_user_added_dialogues');
+                let all_reacted_moods = this.$localStorage.get('filmy_quotes_user_added_moods');
+                // console.log(all_reacted_dialogues);
+                let emotion_found = false;
+                let emotion_at = -1;
+                for (let i = 0; i < all_reacted_dialogues.length; i++) {
+                    if (all_reacted_dialogues[i] === dialogue_id) {
+                        emotion_found = true;
+                        emotion_at = i;
+                        break
+                    }
+                }
+                if (emotion_found) {
+                    all_reacted_dialogues.splice(emotion_at, 1);
+                }
+                delete all_reacted_moods.dialogue_id;
+                // console.log(all_reacted_dialogues);
+                this.$localStorage.set('filmy_quotes_user_added_dialogues', all_reacted_dialogues);
+                this.$localStorage.set('filmy_quotes_user_added_moods', all_reacted_moods);
+                // console.log(this.$localStorage.get('filmy_quotes_user_added_dialogues'));
             },
 
             set_fontsize(dialogue_text) {
@@ -249,18 +391,44 @@
                 }
             },
 
+            enable_emoji_popup(){
+                setTimeout(function () {
+                    $('.add_reaction_button')
+                        .popup({
+                            inline: true,
+                            on: 'click',
+                            variation: 'basic',
+                            duration: 200,
+                            onShow: function () {
+                                $(".button").addClass("active");
+                            },
+                            onHide: function () {
+                                $(".button").removeClass("active");
+                            }
+                        });
+
+                }, 10);
+            },
+
             get_quote() {
                 this.loading_quote = true;
-                let url = '/api/get-dialogues/?limit=1';
+                let url = '/api/get-dialogues/?include_tags=';
+                let filtered_tags = this.$localStorage.get("filmy_quotes_user_added_tag_filters");
+                if(filtered_tags.length){
+                    url += filtered_tags.join();
+                }else{
+                    url += '0';
+                }
+                url += '&year_min=' + this.sliderValue.value[0] + '&year_max=' + this.sliderValue.value[1];
                 this.$http.get(url).then(response => {
                     this.loading_quote = false;
 
                     this.filmyQuotes = response.data;
 
-                    if(this.filmyQuotes.dialogue.star_image_url){
-                        this.actor_image_url_full =  'https://image.tmdb.org/t/p/w500_and_h500_face/'+ this.filmyQuotes.dialogue.star_image_url;
-                        this.actor_image_url_thumb =  'https://image.tmdb.org/t/p/w50_and_h50_face/'+ this.filmyQuotes.dialogue.star_image_url;
-                    }else{
+                    if (this.filmyQuotes.dialogue.star_image_url){
+                        this.actor_image_url_full =  'https://image.tmdb.org/t/p/w500_and_h500_face/' + this.filmyQuotes.dialogue.star_image_url;
+                        this.actor_image_url_thumb =  'https://image.tmdb.org/t/p/w50_and_h50_face/' + this.filmyQuotes.dialogue.star_image_url;
+                    } else {
                         this.actor_image_url_full = placeHolderUrl;
                         this.actor_image_url_thumb = placeHolderUrl
                     }
@@ -268,34 +436,13 @@
                     this.reaction_not_added = !this.check_reacted_dialogue(this.filmyQuotes.dialogue.id);
 
                     this.set_fontsize(this.filmyQuotes.dialogue.dialogue);
-
-                    setTimeout(function () {
-                        $('.button')
-                            .popup({
-                                inline: true,
-                                on: 'click',
-                                variation: 'basic',
-                                duration: 200,
-                                onShow: function () {
-                                    $(".button").addClass("active");
-                                },
-                                onHide: function () {
-                                    $(".button").removeClass("active");
-                                }
-                            });
-
-                    }, 10);
+                    this.enable_emoji_popup();
 
                 }, response => {
                     this.loading_quote = false;
                 });
 
             },
-
-            onEnterClick: function() {
-                alert('Enter was pressed');
-            },
-
 
             add_reaction(id, mood) {
                 this.adding_reaction = true;
@@ -324,15 +471,57 @@
                     }
                     this.filmyQuotes.dialogue.emotions = emotions;
                     this.reaction_not_added = false;
-
-                    this.add_to_reacted_dialogues(id);
-
+                    this.add_to_reacted_dialogues(id, mood);
                     this.adding_reaction = false;
                 }, response => {
                     this.adding_reaction = false;
                 });
-            }
+            },
 
+            remove_reaction(id, mood) {
+                if(this.check_reacted_mood(id, mood)){
+                    let data = {
+                        'dialogue': id,
+                        'mood': mood
+                    };
+                    this.$http.post('/api/remove-emotion/', data).then(response => {
+                        let emotions = this.filmyQuotes.dialogue.emotions;
+                        let emotion_found = false;
+                        let emotion_at = -1;
+                        for (let i = 0; i < emotions.length; i++) {
+                            if (emotions[i].mood === mood) {
+                                emotion_found = true;
+                                emotion_at = i;
+                                break
+                            }
+                        }
+                        if (emotion_found) {
+                            if(emotions[emotion_at].count === 1){
+                                emotions.splice(emotion_at, 1)
+                            }else{
+                                emotions[emotion_at].count = emotions[emotion_at].count - 1;
+                            }
+                        }
+                        this.filmyQuotes.dialogue.emotions = emotions;
+                        this.reaction_not_added = true;
+                        this.remove_from_reacted_dialogues(id);
+                        this.enable_emoji_popup();
+                    }, response => {
+                    });
+                }
+            },
+
+            init_share(){
+                let vm = this;
+                let node = document.getElementById('quote_wrapper');
+                domtoimage.toJpeg(node, { quality: 0.95 })
+                    .then(function (dataUrl) {
+                        var link = document.createElement('a');
+                        link.download = 'filmy-quote-' + vm.filmyQuotes.dialogue.id + '.jpeg';
+                        link.href = dataUrl;
+                        link.click();
+                    });
+            }
         },
 
 
@@ -351,7 +540,9 @@
         },
 
         mounted() {
-            this.get_quote();
+            this.check_first_time_user();
+            this.fetch_tags();
+            this.fetch_year_range();
         }
     }
 
@@ -366,5 +557,6 @@
         @import '../node_modules/inter-ui/inter-ui.css';
         @import '../node_modules/@ibm/type/css/ibm-type.min.css';
         @import './assets/css/main.css';
+        @import '../node_modules/vue-range-slider/dist/vue-range-slider.css'
 
 </style>

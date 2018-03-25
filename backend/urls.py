@@ -25,7 +25,9 @@ urlpatterns = [
     url(r'^api/get-dialogues/$', DialogueViewSet.as_view({'get': 'get_dialogues'})),
     url(r'^api/add-emotion/$', DialogueViewSet.as_view({'post': 'add_emoji'})),
     url(r'^api/remove-emotion/$', DialogueViewSet.as_view({'post': 'remove_emoji'})),
-    url(r'^api/add-dialogue/$', DialogueViewSet.as_view({'post': 'add_dialogue'}))
+    url(r'^api/add-dialogue/$', DialogueViewSet.as_view({'post': 'add_dialogue'})),
+    url(r'^api/get-tags/$', TagViewSet.as_view({'get': 'get_all_tags'})),
+    url(r'^api/get-year-range/$', DialogueViewSet.as_view({'get': 'get_year_range'})),
 ]
 
 if settings.DEBUG:

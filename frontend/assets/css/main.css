@@ -13,6 +13,21 @@ a.logo-container {
   left: 40px;
   top: 40px; }
 
+a.refine-dialogues-button {
+  position: absolute;
+  right: 40px;
+  top: 40px; }
+
+a.share-dialogue-button {
+  position: absolute;
+  right: 100px;
+  top: 40px; }
+
+div.filter-modal-content {
+  text-align: center; }
+  div.filter-modal-content button.tag_button {
+    margin: 5px; }
+
 section.quote {
   position: relative;
   max-width: 1000px;
@@ -40,6 +55,12 @@ section.quote {
     section.quote .content h1 {
       font-weight: 300;
       font-size: 32px; }
+      section.quote .content h1.small {
+        font-size: 24px; }
+      section.quote .content h1.medium {
+        font-size: 30px; }
+      section.quote .content h1.large {
+        font-size: 36px; }
     section.quote .content p {
       font-size: 18px;
       text-transform: capitalize;
