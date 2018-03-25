@@ -17,6 +17,7 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = app_models.Tag.objects.all()
 
     def get_all_tags(self, request, *args, **kwargs):
+
         try:
             tag_objects = self.queryset.exclude(name="miscellaneous").order_by("name")
             tag_serializer = app_serializers.TagSerializer(tag_objects, many=True)
@@ -28,7 +29,6 @@ class TagViewSet(viewsets.ModelViewSet):
 
 class DialogueViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
-
     queryset = app_models.Dialogues.objects.all()
 
     def get_dialogues(self, request, *args, **kwargs):
