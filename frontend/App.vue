@@ -212,7 +212,7 @@
                         "dialogue": "",
                         "movie_name": "",
                         "star": "",
-                        "movie_year": 20,
+                        "movie_year": 0,
                         "tags": [],
                         "emotions": [],
                         "star_image_url": ""
@@ -233,13 +233,19 @@
                     value: [0,0],
                     max: 0,
                     min: 0
-                }
+                },
+                first_time_user: false
             }
         },
 
         computed: {},
 
         methods: {
+
+            check_first_time_user(){
+                this.first_time_user = this.$localStorage.get('filmy_quotes_user_first_time');
+                this.$localStorage.set('filmy_quotes_user_first_time', true);
+            },
 
             fetch_year_range(){
                 let url = '/api/get-year-range/';
@@ -254,7 +260,7 @@
                     }
                     if(max_year_filter === 0){
                         max_year_filter = response.data.max_year;
-                        this.$localStorage.set('filmy_quotes_user_added_max_year', max_year_filter);
+                        cc
                     }
                     this.sliderValue.value = [min_year_filter, max_year_filter];
                     this.get_quote();
@@ -536,6 +542,7 @@
         },
 
         mounted() {
+            this.check_first_time_user();
             this.fetch_tags();
             this.fetch_year_range();
         }

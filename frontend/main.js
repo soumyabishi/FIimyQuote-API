@@ -42,6 +42,10 @@ new Vue({
         filmy_quotes_user_added_max_year: {
             type: Number,
             default: 0
+        },
+        filmy_quotes_user_first_time: {
+            type: Boolean,
+            default: false
         }
     }
 });
