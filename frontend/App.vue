@@ -260,7 +260,6 @@
                     }
                     if(max_year_filter === 0){
                         max_year_filter = response.data.max_year;
-                        cc
                     }
                     this.sliderValue.value = [min_year_filter, max_year_filter];
                     this.get_quote();
