@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^api/add-dialogue/$', DialogueViewSet.as_view({'post': 'add_dialogue'})),
     url(r'^api/get-tags/$', TagViewSet.as_view({'get': 'get_all_tags'})),
     url(r'^api/get-year-range/$', DialogueViewSet.as_view({'get': 'get_year_range'})),
+    url(r'^api/search-movies/$', DialogueViewSet.as_view({'get': 'get_movies'})),
 ]
 
 if settings.DEBUG:

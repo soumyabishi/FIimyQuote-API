@@ -31,6 +31,25 @@ class DialogueViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
     queryset = app_models.Dialogues.objects.all()
 
+    def get_movies(self, request, *args, **kwargs):
+        try:
+            movie_query = str(request.GET['query'])
+        except:
+            return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            return_obj = []
+            if len(movie_query.strip()):
+                movie_objects = app_models.Dialogues.objects.filter(movie_name__icontains=movie_query).order_by().values_list('movie_name', 'movie_year').distinct()
+                return_obj = list(map(lambda obj: {
+                    'name': str(obj[0]),
+                    'year': str(obj[1])
+                }, movie_objects))
+            return JsonResponse({"query": movie_query, "results": return_obj, "total_results": len(return_obj)}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def get_dialogues(self, request, *args, **kwargs):
 
         # Get All Parameters
