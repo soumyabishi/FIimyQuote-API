@@ -39,13 +39,17 @@ class DialogueViewSet(viewsets.ModelViewSet):
 
         try:
             return_obj = []
+            success = False
             if len(movie_query.strip()):
                 movie_objects = app_models.Dialogues.objects.filter(movie_name__icontains=movie_query).order_by().values_list('movie_name', 'movie_year').distinct()
                 return_obj = list(map(lambda obj: {
-                    'name': str(obj[0]),
-                    'year': str(obj[1])
+                    'name': '{name}_{year}'.format(name=str(obj[0]), year=str(obj[1])),
+                    'value': '{name}|{year}'.format(name=str(obj[0]), year=str(obj[1])),
+                    'text': "{name} ({year})".format(name=str(obj[0]), year=str(obj[1]))
                 }, movie_objects))
-            return JsonResponse({"query": movie_query, "results": return_obj, "total_results": len(return_obj)}, status=status.HTTP_200_OK)
+            if len(return_obj) != 0:
+                success = True
+            return JsonResponse({"success": success, "results": return_obj}, status=status.HTTP_200_OK)
         except Exception as e:
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
