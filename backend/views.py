@@ -6,6 +6,7 @@ from rest_framework import status
 from django.http import JsonResponse
 import backend.models as app_models
 import backend.serializers as app_serializers
+from django.db.models import Count
 
 
 def index(request):
@@ -140,6 +141,15 @@ class DialogueViewSet(viewsets.ModelViewSet):
             min_year = self.queryset.aggregate(Min('movie_year'))['movie_year__min']
             max_year = self.queryset.aggregate(Max('movie_year'))['movie_year__max']
             return JsonResponse({"min_year": min_year, "max_year": max_year}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get_counts(self, request, *args, **kwargs):
+        try:
+            dialogue_count = self.queryset.count()
+            movies = self.queryset.order_by().values('movie_name').distinct()
+            return JsonResponse({"dialogues": dialogue_count, "movies": len(movies)}, status=status.HTTP_200_OK)
         except Exception as e:
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
