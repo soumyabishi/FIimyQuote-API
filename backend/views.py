@@ -82,19 +82,6 @@ class DialogueViewSet(viewsets.ModelViewSet):
             dialogue_ser = app_serializers.DialogueSerializer(dialogue)
             return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
 
-            # # Check limit
-            # if limit == 1:
-            #     dialogue = random.choice(dialogue_objects)
-            #     dialogue_ser = app_serializers.DialogueSerializer(dialogue)
-            #     return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
-            # elif limit > 1:
-            #     dialogues = []
-            #     while limit != 0:
-            #         dialogues.append(random.choice(dialogue_objects))
-            #         limit -= 1
-            #     dialogues_ser = app_serializers.DialogueSerializer(dialogues, many=True)
-            #     return JsonResponse({"dialogues": dialogues_ser.data}, status=status.HTTP_200_OK)
-
         except Exception as e:
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -156,47 +143,3 @@ class DialogueViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def add_dialogue(self, request, *args, **kwargs):
-
-        # Get All Parameters
-        try:
-            movie = request.GET["movie"]
-            year = request.GET["year"]
-            dialogue = request.GET["dialogue"]
-            star = request.GET["star"]
-            tags = request.GET["tags"].split(',')
-        except:
-            return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Add Tag
-        saved_tags = []
-        for each_tag in tags:
-            tag_ser = app_serializers.TagSerializer(data={
-                'name': each_tag
-            })
-            if not tag_ser.is_valid():
-                JsonResponse({"error": "Tag Invalid"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                tag_obj = tag_ser.save()
-                saved_tags.append(tag_obj)
-
-        # Add Dialog
-        data = {
-            'dialogue': dialogue,
-            'movie_name': movie,
-            'star': star,
-            'movie_year': year
-        }
-        dialogue_ser = app_serializers.DialogueSerializer(data=data)
-
-        if not dialogue_ser.is_valid():
-            JsonResponse({"error": "Dialogue Invalid"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            dialogue_obj = dialogue_ser.save()
-
-        # Tag Mapping
-        for each_tag in saved_tags:
-            (tag_mapping_obj, created) = app_models.TagMapping.objects.get_or_create(dialogue=dialogue_obj, tag=each_tag)
-
-        return JsonResponse({"message": "Dialogue Added"}, status=status.HTTP_200_OK)
