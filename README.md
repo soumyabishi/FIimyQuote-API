@@ -1,10 +1,6 @@
 # FilmyQuote API
 
-This project contains API base for **FilmyQuote Chrome Extension** `           
-
-```bash
-https://chrome.google.com/webstore/detail/filmyquote/blilgiggcmodgommbfmiihcblfmfgkij?hl=en&.`
-```
+This project contains API base for [**FilmyQuote Chrome Extension**](https://chrome.google.com/webstore/detail/filmyquote/blilgiggcmodgommbfmiihcblfmfgkij?hl=en&)`           
 
 ### Features
 
