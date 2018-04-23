@@ -28,7 +28,8 @@ urlpatterns = [
     url(r'^api/get-tags/$', TagViewSet.as_view({'get': 'get_all_tags'})),
     url(r'^api/get-year-range/$', DialogueViewSet.as_view({'get': 'get_year_range'})),
     url(r'^api/search-movies/$', DialogueViewSet.as_view({'get': 'get_movies'})),
-    url(r'^api/fetch-counts/$', DialogueViewSet.as_view({'get': 'get_counts'}))
+    url(r'^api/fetch-counts/$', DialogueViewSet.as_view({'get': 'get_counts'})),
+    url(r'^api/slack/$', DialogueSlackViewSet.as_view({'post': 'get_dialogue'}))
 ]
 
 if settings.DEBUG:

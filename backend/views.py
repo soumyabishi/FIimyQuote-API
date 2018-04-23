@@ -3,6 +3,7 @@ from django.db.models import Max, Min
 import random
 from rest_framework import permissions, viewsets, mixins
 from rest_framework import status
+from rest_framework.response import Response
 from django.http import JsonResponse
 import backend.models as app_models
 import backend.serializers as app_serializers
@@ -153,3 +154,45 @@ class DialogueViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DialogueSlackViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    queryset = app_models.Dialogues.objects.all()
+
+    def get_dialogue(self, request, *args, **kwargs):
+
+        try:
+            dialogue_objects = self.queryset
+            # if movie_name != '0':
+            #     dialogue_objects = self.queryset.filter(movie_name__icontains=movie_name, movie_year=movie_year)
+            # else:
+            #     dialogue_objects = self.queryset.filter(movie_year__gte=year_min, movie_year__lte=year_max)
+            #
+            #     # Filter by tags
+            #     if include_tags[0] != 0:
+            #         dialogue_objects = dialogue_objects.filter(tag__in=include_tags)
+
+            dialogue = random.choice(dialogue_objects)
+            dialogue_ser = app_serializers.DialogueSerializer(dialogue)
+            star_name = ""
+            for each in dialogue_ser.data['star'].strip().split(" "):
+                star_name += each.capitalize() + " "
+            data = {
+                "attachments": [
+                    {
+                        "title": dialogue_ser.data['dialogue'],
+                        "text": "{star}, {movie_name} ({movie_year})".format(star=star_name[:-1], movie_name=dialogue_ser.data['movie_name'], movie_year=dialogue_ser.data['movie_year']),
+                        "color": "#192f42",
+                        "footer": "Posted using /filmyquote",
+                    }
+                ]
+            }
+            if dialogue_ser.data['star_image_url'].strip() != "":
+                data["attachments"][0]["thumb_url"] = "https://image.tmdb.org/t/p/w500_and_h500_face/{poster}".format(poster=dialogue_ser.data['star_image_url'])
+            return Response(data=data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
