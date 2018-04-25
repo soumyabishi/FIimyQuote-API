@@ -182,43 +182,10 @@ class DialogueSlackViewSet(viewsets.ModelViewSet):
                 "response_type": "in_channel",
                 "attachments": [
                     {
-                        "fields": [
-                            {
-                                "title": dialogue_ser.data['dialogue'],
-                                "value": "{star}, {movie_name} ({movie_year})".format(star=star_name[:-1],
-                                                                                      movie_name=dialogue_ser.data[
-                                                                                          'movie_name'],
-                                                                                      movie_year=dialogue_ser.data[
-                                                                                          'movie_year']),
-                                "short": True
-                            }
-                        ],
+                        "title": dialogue_ser.data['dialogue'],
+                        "text": "{star}, {movie_name} ({movie_year})".format(star=star_name[:-1], movie_name=dialogue_ser.data['movie_name'], movie_year=dialogue_ser.data['movie_year']),
                         "color": "#192f42",
                         "footer": "Posted using /filmyquote",
-                        "callback_id": "shuffle_quote",
-                        "type": "interactive_message",
-                        "actions": [
-                            {
-                                "name": "send",
-                                "text": "Send",
-                                "style": "primary",
-                                "type": "button",
-                                "value": "send"
-                            },
-                            {
-                                "name": "shuffle",
-                                "text": "Shuffle",
-                                "type": "button",
-                                "value": "shuffle"
-                            },
-                            {
-                                "name": "cancel",
-                                "text": "Cancel",
-                                "style": "danger",
-                                "type": "button",
-                                "value": "cancel",
-                            }
-                        ]
                     }
                 ]
             }
