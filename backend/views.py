@@ -21,11 +21,11 @@ def index(request):
 
 
 def https_view_1(request):
-    return HttpResponse(open(XMLFILES_FOLDER + 'iJWaUiJulIuA-b5RZgxdxuSl8AjrNH57GnEKJzf0d2Y.txt', "rb").read(), content_type="text/xml")
+    return HttpResponse(open(XMLFILES_FOLDER + 'iJWaUiJulIuA-b5RZgxdxuSl8AjrNH57GnEKJzf0d2Y', "rb").read(), content_type="text/xml")
 
 
 def https_view_2(request):
-    return HttpResponse(open(XMLFILES_FOLDER + '/KHbZ7N85wkULa9I997i886bGodd0jHfERLtHyNA0ObU.txt', "rb").read(), content_type="text/xml")
+    return HttpResponse(open(XMLFILES_FOLDER + 'KHbZ7N85wkULa9I997i886bGodd0jHfERLtHyNA0ObU', "rb").read(), content_type="text/xml")
 
 
 class TagViewSet(viewsets.ModelViewSet):
