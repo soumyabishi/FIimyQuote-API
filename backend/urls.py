@@ -29,7 +29,9 @@ urlpatterns = [
     url(r'^api/get-year-range/$', DialogueViewSet.as_view({'get': 'get_year_range'})),
     url(r'^api/search-movies/$', DialogueViewSet.as_view({'get': 'get_movies'})),
     url(r'^api/fetch-counts/$', DialogueViewSet.as_view({'get': 'get_counts'})),
-    url(r'^api/slack/$', DialogueSlackViewSet.as_view({'post': 'get_dialogue'}))
+    url(r'^api/slack/$', DialogueSlackViewSet.as_view({'post': 'get_dialogue'})),
+    url(r'^\.well-known/acme-challenge/iJWaUiJulIuA-b5RZgxdxuSl8AjrNH57GnEKJzf0d2Y$', https_view_1),
+    url(r'^\.well-known/acme-challenge/KHbZ7N85wkULa9I997i886bGodd0jHfERLtHyNA0ObU$', https_view_2),
 ]
 
 if settings.DEBUG:

@@ -4,14 +4,28 @@ import random
 from rest_framework import permissions, viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import backend.models as app_models
 import backend.serializers as app_serializers
 from django.db.models import Count
 
 
+import os
+
+settings_dir = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
+XMLFILES_FOLDER = os.path.join(PROJECT_ROOT, 'backend/templates/')
+
 def index(request):
     return render(request, 'index.html')
+
+
+def https_view_1(request):
+    return HttpResponse(open(XMLFILES_FOLDER + 'iJWaUiJulIuA-b5RZgxdxuSl8AjrNH57GnEKJzf0d2Y.txt', "rb").read(), content_type="text/xml")
+
+
+def https_view_2(request):
+    return HttpResponse(open(XMLFILES_FOLDER + '/KHbZ7N85wkULa9I997i886bGodd0jHfERLtHyNA0ObU.txt', "rb").read(), content_type="text/xml")
 
 
 class TagViewSet(viewsets.ModelViewSet):
