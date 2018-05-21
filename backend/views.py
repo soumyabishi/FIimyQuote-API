@@ -103,6 +103,26 @@ class DialogueViewSet(viewsets.ModelViewSet):
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+    def get_dialogue(self, request, *args, **kwargs):
+
+        # Get All Parameters
+        try:
+            dialogue_id = str(request.GET['dialogue_id']).strip()
+        except:
+            return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+
+            dialogue_objects = self.queryset.filter(id=dialogue_id)
+
+            dialogue_ser = app_serializers.DialogueSerializer(dialogue_objects[0])
+            return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print str(e)
+            return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
     def add_emoji(self, request, *args, **kwargs):
 
         # Get All Parameters
