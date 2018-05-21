@@ -198,7 +198,7 @@ class DialogueSlackViewSet(viewsets.ModelViewSet):
                     {
                         "title": dialogue_ser.data['dialogue'],
                         "text": "{star}, {movie_name} ({movie_year})".format(star=star_name[:-1], movie_name=dialogue_ser.data['movie_name'], movie_year=dialogue_ser.data['movie_year']),
-                        "color": "#192f42",
+                        "color": "#E8E8E8",
                         "footer": "Posted using /filmyquote",
                     }
                 ]
