@@ -32,21 +32,33 @@ class DialogueSerializer(serializers.ModelSerializer):
 
     def get_emotions(self, obj):
         emotion_objs = app_models.Emotion.objects.filter(dialogue=obj)
-        all_moods = ['heart_eyes', 'joy', 'flushed', 'pensive', 'rage']
-        return_obj = []
-        extra_moods = []
-        for each_obj in emotion_objs:
-            return_obj.append({
-                'mood': each_obj.mood,
-                'count': each_obj.count
-            })
-            if str(each_obj.mood) not in all_moods:
-                extra_moods.append(each_obj.mood)
-        for each_mood in extra_moods:
-            return_obj.append({
-                'mood': each_mood,
+        return_obj = [
+            {
+                'mood': 'heart_eyes',
                 'count': 0
-            })
+            },
+            {
+                'mood': 'joy',
+                'count': 0
+            },
+            {
+                'mood': 'flushed',
+                'count': 0
+            },
+            {
+                'mood': 'pensive',
+                'count': 0
+            },
+            {
+                'mood': 'rage',
+                'count': 0
+            }
+        ]
+        for each_obj in emotion_objs:
+            for each_ret in return_obj:
+                if each_ret['mood'] == each_obj.mood:
+                    each_ret['count'] = each_obj.count
+
         return return_obj
 
 
