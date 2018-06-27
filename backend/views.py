@@ -47,22 +47,32 @@ class DialogueViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
     queryset = app_models.Dialogues.objects.all()
 
-    def get_movies(self, request, *args, **kwargs):
+    def search_results(self, request, *args, **kwargs):
         try:
-            movie_query = str(request.GET['query'])
+            query = str(request.GET['query'])
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             return_obj = []
             success = False
-            if len(movie_query.strip()):
-                movie_objects = app_models.Dialogues.objects.filter(movie_name__icontains=movie_query).order_by().values_list('movie_name', 'movie_year').distinct()
-                return_obj = list(map(lambda obj: {
-                    'name': '{name}_{year}'.format(name=str(obj[0]), year=str(obj[1])),
-                    'value': '{name}|{year}'.format(name=str(obj[0]), year=str(obj[1])),
-                    'text': "{name} ({year})".format(name=str(obj[0]), year=str(obj[1]))
-                }, movie_objects))
+            if len(query.strip()):
+                movie_objects = app_models.Dialogues.objects.filter(movie_name__icontains=query).order_by().values_list('movie_name', 'movie_year').distinct()
+                actor_objects = app_models.Dialogues.objects.filter(star__icontains=query).order_by().values_list('star').distinct()
+                for each_obj in movie_objects:
+                    return_obj.append({
+                        'name': '{name}_{year}'.format(name=str(each_obj[0]), year=str(each_obj[1])),
+                        'value': '{name}|{year}'.format(name=str(each_obj[0]), year=str(each_obj[1])),
+                        'text': "{name} ({year})".format(name=str(each_obj[0]), year=str(each_obj[1])),
+                        'type': "movie"
+                    })
+                for each_obj in actor_objects:
+                    return_obj.append({
+                        'name': str(each_obj[0]),
+                        'value': str(each_obj[0]),
+                        'text': str(each_obj[0]),
+                        'type': "star"
+                    })
             if len(return_obj) != 0:
                 success = True
             return JsonResponse({"success": success, "results": return_obj}, status=status.HTTP_200_OK)
