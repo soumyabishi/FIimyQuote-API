@@ -90,6 +90,7 @@ class DialogueViewSet(viewsets.ModelViewSet):
             year_max = int(request.GET["year_max"])
             movie_name = str(request.GET['movie_name']).strip()
             movie_year = str(request.GET['movie_year']).strip()
+            star = str(request.GET['star']).strip()
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,6 +98,8 @@ class DialogueViewSet(viewsets.ModelViewSet):
 
             if movie_name != '0':
                 dialogue_objects = self.queryset.filter(movie_name__icontains=movie_name, movie_year=movie_year)
+            elif star != '0':
+                dialogue_objects = self.queryset.filter(star__icontains=star)
             else:
                 dialogue_objects = self.queryset.filter(movie_year__gte=year_min, movie_year__lte=year_max)
 
