@@ -22,8 +22,8 @@ from backend.views import *
 urlpatterns = [
 #    url(r'^admin/', admin.site.urls),
     url(r'^$', index, name='home'),
-    url(r'^api/get-dialogues/$', DialogueViewSet.as_view({'get': 'get_dialogues'})),
-    url(r'^api/get-dialogue-by-id/$', DialogueViewSet.as_view({'get': 'get_dialogue'})),
+    url(r'^api/get-dialogues/$', DialogueViewSet.as_view({'get': 'get_random_dialogue'})),
+    url(r'^api/get-dialogue-by-id/$', DialogueViewSet.as_view({'get': 'get_dialogue_detail'})),
     url(r'^api/add-emotion/$', DialogueViewSet.as_view({'post': 'add_emoji'})),
     url(r'^api/remove-emotion/$', DialogueViewSet.as_view({'post': 'remove_emoji'})),
     url(r'^api/get-tags/$', TagViewSet.as_view({'get': 'get_all_tags'})),

@@ -9,7 +9,6 @@ import backend.models as app_models
 import backend.serializers as app_serializers
 from django.db.models import Count
 
-
 import os
 
 settings_dir = os.path.dirname(__file__)
@@ -80,11 +79,9 @@ class DialogueViewSet(viewsets.ModelViewSet):
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def get_dialogues(self, request, *args, **kwargs):
+    def get_random_dialogue(self, request, *args, **kwargs):
 
-        # Get All Parameters
         try:
-            # limit = int(request.GET["limit"])
             include_tags = list(map(lambda tag: int(tag), request.GET["include_tags"].strip().split(',')))
             year_min = int(request.GET["year_min"])
             year_max = int(request.GET["year_max"])
@@ -95,7 +92,6 @@ class DialogueViewSet(viewsets.ModelViewSet):
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-
             if movie_name != '0':
                 dialogue_objects = self.queryset.filter(movie_name__icontains=movie_name, movie_year=movie_year)
             elif star != '0':
@@ -103,7 +99,6 @@ class DialogueViewSet(viewsets.ModelViewSet):
             else:
                 dialogue_objects = self.queryset.filter(movie_year__gte=year_min, movie_year__lte=year_max)
 
-                # Filter by tags
                 if include_tags[0] != 0:
                     dialogue_objects = dialogue_objects.filter(tag__in=include_tags)
 
@@ -116,21 +111,17 @@ class DialogueViewSet(viewsets.ModelViewSet):
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-    def get_dialogue(self, request, *args, **kwargs):
+    def get_dialogue_detail(self, request, *args, **kwargs):
 
-        # Get All Parameters
         try:
             dialogue_id = str(request.GET['dialogue_id']).strip()
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-
             dialogue_objects = self.queryset.filter(id=dialogue_id)
-
             dialogue_ser = app_serializers.DialogueSerializer(dialogue_objects[0])
             return JsonResponse({"dialogue": dialogue_ser.data}, status=status.HTTP_200_OK)
-
         except Exception as e:
             print str(e)
             return JsonResponse({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -138,14 +129,12 @@ class DialogueViewSet(viewsets.ModelViewSet):
 
     def add_emoji(self, request, *args, **kwargs):
 
-        # Get All Parameters
         try:
             dialogue = request.data["dialogue"]
             mood = request.data["mood"]
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check If Emotion is present
         dialogue_obj = app_models.Dialogues.objects.get(id=dialogue)
         emotion_objects = app_models.Emotion.objects.filter(mood=mood, dialogue=dialogue_obj)
         if len(emotion_objects) == 0:
@@ -159,14 +148,12 @@ class DialogueViewSet(viewsets.ModelViewSet):
 
     def remove_emoji(self, request, *args, **kwargs):
 
-        # Get All Parameters
         try:
             dialogue = request.data["dialogue"]
             mood = request.data["mood"]
         except:
             return JsonResponse({"error": "Bad Parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check If Emotion is present
         dialogue_obj = app_models.Dialogues.objects.get(id=dialogue)
         emotion_objects = app_models.Emotion.objects.filter(mood=mood, dialogue=dialogue_obj)
         if len(emotion_objects) == 0:
@@ -174,7 +161,6 @@ class DialogueViewSet(viewsets.ModelViewSet):
         else:
             emotion_object = emotion_objects[0]
 
-            # Check emotion count
             count = emotion_object.count
             if count == 1:
                 emotion_object.delete()
@@ -211,15 +197,6 @@ class DialogueSlackViewSet(viewsets.ModelViewSet):
 
         try:
             dialogue_objects = self.queryset
-            # if movie_name != '0':
-            #     dialogue_objects = self.queryset.filter(movie_name__icontains=movie_name, movie_year=movie_year)
-            # else:
-            #     dialogue_objects = self.queryset.filter(movie_year__gte=year_min, movie_year__lte=year_max)
-            #
-            #     # Filter by tags
-            #     if include_tags[0] != 0:
-            #         dialogue_objects = dialogue_objects.filter(tag__in=include_tags)
-
             dialogue = random.choice(dialogue_objects)
             dialogue_ser = app_serializers.DialogueSerializer(dialogue)
             star_name = ""
