@@ -30,5 +30,5 @@ make build
 
 ### Authors
 
-* Shiv Prasad - Backend - [**shiv-prasad**](https://github.com/shiv-prasad)
-* Soumya Ranjan Bishi - Frontend - [**soumyabishi**](https://github.com/soumyabishi/)
+* Shiv Prasad - **Backend** - [**shiv-prasad**](https://github.com/shiv-prasad)
+* Soumya Ranjan Bishi - **Frontend** - [**soumyabishi**](https://github.com/soumyabishi/)
