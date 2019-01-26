@@ -27,3 +27,8 @@ These steps will install production dependencies and build our application to `s
 make prod
 make build
 ```
+
+### Authors
+
+* Shiv Prasad - [Github Profile](https://github.com/shiv-prasad)
+* Soumya Ranjan Bishi [Github Profile](https://github.com/soumyabishi/)
