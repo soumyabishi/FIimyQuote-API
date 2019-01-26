@@ -8,7 +8,6 @@ This project contains API base for [**FilmyQuote Chrome Extension**](https://chr
 * Backed by Django Rest Framework
 * Makefile to make your life easy
 
-
 ### Development environment setup
 
 These steps will install all required dependencies including development ones, run migrations and start dev server.
