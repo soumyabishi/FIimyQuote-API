@@ -30,6 +30,6 @@ make build
 
 ### Authors
 
-* Shiv Prasad - **Backend** - [github.com/shiv-prasad](https://github.com/shiv-prasad)
-* Soumya Ranjan Bishi - **Frontend** - [github.com/ssoumyabishi](https://github.com/soumyabishi/)
+* Shiv Prasad - **Backend** - [shiv-prasad](https://github.com/shiv-prasad)
+* Soumya Ranjan Bishi - **Frontend** - [soumyabishi](https://github.com/soumyabishi/)
 
